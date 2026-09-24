@@ -6,7 +6,12 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 
-export default function TenantSettings() {
+export default function TenantSettings({
+    timezones,
+}: {
+    // IANA name -> label, e.g. { "Asia/Jakarta": "WIB: Western Indonesia (...)" }.
+    timezones: Record<string, string>;
+}) {
     const { currentTenant } = usePage().props;
 
     // Always set on tenant routes (EnsureTenantMember guarantees it); the check satisfies TypeScript.
@@ -42,6 +47,28 @@ export default function TenantSettings() {
                                     defaultValue={currentTenant.name}
                                 />
                                 <InputError message={errors.name} />
+                            </div>
+
+                            <div className="grid gap-2">
+                                <Label htmlFor="timezone">Timezone</Label>
+                                <select
+                                    id="timezone"
+                                    name="timezone"
+                                    defaultValue={currentTenant.timezone}
+                                    className="h-9 w-full rounded-md border border-input bg-transparent px-3 text-base shadow-xs outline-none focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/50 md:text-sm"
+                                >
+                                    {Object.entries(timezones).map(
+                                        ([value, label]) => (
+                                            <option key={value} value={value}>
+                                                {label}
+                                            </option>
+                                        ),
+                                    )}
+                                </select>
+                                <p className="text-sm text-muted-foreground">
+                                    Teachers' weekly hours are in this timezone.
+                                </p>
+                                <InputError message={errors.timezone} />
                             </div>
 
                             <div className="grid gap-2">

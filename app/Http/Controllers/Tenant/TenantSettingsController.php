@@ -12,12 +12,14 @@ use Inertia\Response;
 class TenantSettingsController extends Controller
 {
     /**
-     * Show the workspace settings page. The tenant's name and slug come from the shared
-     * `currentTenant` prop, so no page props are needed.
+     * Show the workspace settings page. The tenant's own values come from the shared
+     * `currentTenant` prop; the page only needs the choices for the timezone field.
      */
     public function edit(): Response
     {
-        return Inertia::render('tenant/settings');
+        return Inertia::render('tenant/settings', [
+            'timezones' => Tenant::TIMEZONES,
+        ]);
     }
 
     /**

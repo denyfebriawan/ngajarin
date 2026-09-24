@@ -8,6 +8,8 @@ export type TenantSummary = {
 
 // The workspace the current page belongs to.
 export type CurrentTenant = TenantSummary & {
+    // IANA name, e.g. "Asia/Jakarta". Availability hours are local times in this zone.
+    timezone: string;
     role: Role;
     // Which actions the UI should offer. The server still checks every action itself.
     can: {

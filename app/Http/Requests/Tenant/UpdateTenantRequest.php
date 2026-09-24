@@ -2,8 +2,10 @@
 
 namespace App\Http\Requests\Tenant;
 
+use App\Models\Tenant;
 use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
 
 class UpdateTenantRequest extends FormRequest
 {
@@ -18,6 +20,7 @@ class UpdateTenantRequest extends FormRequest
     {
         return [
             'name' => ['required', 'string', 'max:255'],
+            'timezone' => ['required', 'string', Rule::in(array_keys(Tenant::TIMEZONES))],
         ];
     }
 }

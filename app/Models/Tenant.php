@@ -17,15 +17,25 @@ use Illuminate\Support\Carbon;
  * @property int $id
  * @property string $name
  * @property string $slug
+ * @property string $timezone IANA name, one of Tenant::TIMEZONES.
  * @property Carbon|null $created_at
  * @property Carbon|null $updated_at
  */
-#[Fillable(['name', 'slug'])]
+#[Fillable(['name', 'slug', 'timezone'])]
 #[RouteKey('slug')]
 class Tenant extends Model
 {
     /** @use HasFactory<TenantFactory> */
     use HasFactory;
+
+    /**
+     * The timezones a workspace can choose: Indonesia's three.
+     */
+    public const TIMEZONES = [
+        'Asia/Jakarta' => 'WIB: Western Indonesia (Jakarta, Sumatra, Java)',
+        'Asia/Makassar' => 'WITA: Central Indonesia (Makassar, Bali, Kalimantan)',
+        'Asia/Jayapura' => 'WIT: Eastern Indonesia (Jayapura, Maluku)',
+    ];
 
     /**
      * Everyone who belongs to this tenant, with their role on the pivot.

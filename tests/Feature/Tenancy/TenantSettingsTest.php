@@ -2,6 +2,7 @@
 
 use App\Enums\Role;
 use App\Models\Tenant;
+use App\Models\User;
 use Inertia\Testing\AssertableInertia as Assert;
 
 beforeEach(function () {
@@ -42,6 +43,7 @@ test('owners can rename the tenant without changing its slug', function () {
         ->from(route('tenant.dashboard', $this->tenant))
         ->patch(route('tenant.settings.update', $this->tenant), [
             'name' => 'New Name',
+            'timezone' => 'Asia/Jakarta',
             'slug' => 'hijacked',
         ])
         ->assertSessionHasNoErrors()
@@ -80,3 +82,41 @@ test('the frontend is told which actions the user may take', function (Role $rol
     'owner' => [Role::Owner, true],
     'tutor' => [Role::Tutor, false],
 ]);
+
+test('new workspaces use Western Indonesian Time', function () {
+    $this->actingAs(User::factory()->create())
+        ->post(route('tenants.store'), ['name' => 'Ani English', 'slug' => 'ani-english']);
+
+    expect(Tenant::firstWhere('slug', 'ani-english')->timezone)->toBe('Asia/Jakarta');
+});
+
+test('owners can change the timezone to another Indonesian zone', function () {
+    $owner = memberOf($this->tenant, Role::Owner);
+
+    $this->actingAs($owner)
+        ->patch(route('tenant.settings.update', $this->tenant), ['name' => 'Old Name', 'timezone' => 'Asia/Makassar'])
+        ->assertSessionHasNoErrors();
+
+    expect($this->tenant->fresh()->timezone)->toBe('Asia/Makassar');
+});
+
+test('only the listed timezones are accepted', function (string $timezone) {
+    $owner = memberOf($this->tenant, Role::Owner);
+
+    $this->actingAs($owner)
+        ->patch(route('tenant.settings.update', $this->tenant), ['name' => 'Old Name', 'timezone' => $timezone])
+        ->assertSessionHasErrors('timezone');
+
+    expect($this->tenant->fresh()->timezone)->toBe('Asia/Jakarta');
+})->with(['Europe/London', 'Mars/Olympus', '']);
+
+test('the settings page offers the timezones', function () {
+    $owner = memberOf($this->tenant, Role::Owner);
+
+    $this->actingAs($owner)
+        ->get(route('tenant.settings.edit', $this->tenant))
+        ->assertInertia(fn (Assert $page) => $page
+            ->where('timezones', Tenant::TIMEZONES)
+            ->where('currentTenant.timezone', 'Asia/Jakarta'),
+        );
+});
