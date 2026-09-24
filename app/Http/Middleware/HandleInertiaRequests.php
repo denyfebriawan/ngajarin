@@ -2,6 +2,7 @@
 
 namespace App\Http\Middleware;
 
+use App\Tenancy\CurrentTenant;
 use Illuminate\Http\Request;
 use Inertia\Middleware;
 
@@ -42,6 +43,28 @@ class HandleInertiaRequests extends Middleware
                 'user' => $request->user(),
             ],
             'sidebarOpen' => ! $request->hasCookie('sidebar_state') || $request->cookie('sidebar_state') === 'true',
+            // A closure, so it runs when the page is rendered: after EnsureTenantMember has run.
+            'currentTenant' => fn () => $this->currentTenant(),
+        ];
+    }
+
+    /**
+     * The tenant this request is for, or null outside tenant routes.
+     *
+     * @return array{name: string, slug: string, role: string}|null
+     */
+    private function currentTenant(): ?array
+    {
+        if (! app()->bound(CurrentTenant::class)) {
+            return null;
+        }
+
+        $current = app(CurrentTenant::class);
+
+        return [
+            'name' => $current->tenant->name,
+            'slug' => $current->tenant->slug,
+            'role' => $current->role->value,
         ];
     }
 }
