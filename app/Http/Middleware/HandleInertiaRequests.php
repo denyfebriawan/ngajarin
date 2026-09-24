@@ -69,7 +69,7 @@ class HandleInertiaRequests extends Middleware
      *
      * `can` tells the UI which actions to show; the server still checks each action itself.
      *
-     * @return array{name: string, slug: string, role: string, can: array{update: bool}}|null
+     * @return array{name: string, slug: string, timezone: string, role: string, can: array{update: bool, manageSubjects: bool, teach: bool}}|null
      */
     private function currentTenant(Request $request): ?array
     {
@@ -82,9 +82,12 @@ class HandleInertiaRequests extends Middleware
         return [
             'name' => $current->tenant->name,
             'slug' => $current->tenant->slug,
+            'timezone' => $current->tenant->timezone,
             'role' => $current->role->value,
             'can' => [
                 'update' => $request->user()?->can('update', $current->tenant) ?? false,
+                'manageSubjects' => $request->user()?->can('manageSubjects', $current->tenant) ?? false,
+                'teach' => $request->user()?->can('teach', $current->tenant) ?? false,
             ],
         ];
     }

@@ -30,8 +30,9 @@ test('members can open their tenant and see it with their role', function () {
             ->where('currentTenant', [
                 'name' => 'Budi Math',
                 'slug' => 'budi-math',
+                'timezone' => 'Asia/Jakarta',
                 'role' => 'tutor',
-                'can' => ['update' => false],
+                'can' => ['update' => false, 'manageSubjects' => false, 'teach' => true],
             ]),
         );
 });

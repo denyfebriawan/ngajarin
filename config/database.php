@@ -97,6 +97,10 @@ return [
             'prefix_indexes' => true,
             'search_path' => 'public',
             'sslmode' => env('DB_SSLMODE', 'prefer'),
+            // Match the app (config/app.php is UTC). Laravel writes timestamps without an offset, so
+            // Postgres reads them in the session's timezone, which otherwise depends on how that
+            // server was installed (e.g. Asia/Bangkok on a Windows install).
+            'timezone' => 'UTC',
         ],
 
         'sqlsrv' => [

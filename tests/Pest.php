@@ -1,5 +1,8 @@
 <?php
 
+use App\Enums\Role;
+use App\Models\Tenant;
+use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
@@ -16,3 +19,24 @@ use Tests\TestCase;
 pest()->extend(TestCase::class)
     ->use(RefreshDatabase::class)
     ->in('Feature');
+
+/*
+|--------------------------------------------------------------------------
+| Helpers
+|--------------------------------------------------------------------------
+|
+| Functions shared by several test files. A function declared in one test file is global, so
+| declaring it again in another would be a fatal "cannot redeclare" error; shared ones live here.
+|
+*/
+
+/**
+ * A new user who belongs to the tenant with the given role.
+ */
+function memberOf(Tenant $tenant, Role $role): User
+{
+    $user = User::factory()->create();
+    $tenant->addMember($user, $role);
+
+    return $user;
+}
