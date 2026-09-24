@@ -2,20 +2,11 @@
 
 use App\Enums\Role;
 use App\Models\Tenant;
-use App\Models\User;
 use Inertia\Testing\AssertableInertia as Assert;
 
 beforeEach(function () {
     $this->tenant = Tenant::factory()->create(['name' => 'Old Name', 'slug' => 'budi-math']);
 });
-
-function memberOf(Tenant $tenant, Role $role): User
-{
-    $user = User::factory()->create();
-    $tenant->addMember($user, $role);
-
-    return $user;
-}
 
 test('only owners may update the tenant', function (Role $role, bool $allowed) {
     $user = memberOf($this->tenant, $role);

@@ -12,5 +12,6 @@ export type CurrentTenant = TenantSummary & {
     // Which actions the UI should offer. The server still checks every action itself.
     can: {
         update: boolean;
+        manageSubjects: boolean;
     };
 };

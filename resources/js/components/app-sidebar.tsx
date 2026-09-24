@@ -3,6 +3,7 @@ import {
     BookOpen,
     Building2,
     FolderGit2,
+    GraduationCap,
     House,
     LayoutGrid,
     Plus,
@@ -24,6 +25,7 @@ import {
 import { dashboard } from '@/routes';
 import { dashboard as tenantDashboard } from '@/routes/tenant';
 import { edit as tenantSettings } from '@/routes/tenant/settings';
+import { index as tenantSubjects } from '@/routes/tenant/subjects';
 import { create as createTenant } from '@/routes/tenants';
 import type { NavItem } from '@/types';
 
@@ -58,6 +60,11 @@ export function AppSidebar() {
                   title: 'Overview',
                   href: tenantDashboard(currentTenant.slug),
                   icon: House,
+              },
+              {
+                  title: 'Subjects',
+                  href: tenantSubjects(currentTenant.slug),
+                  icon: GraduationCap,
               },
               ...(currentTenant.can.update
                   ? [

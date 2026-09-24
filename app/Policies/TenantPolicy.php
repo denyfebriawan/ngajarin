@@ -19,4 +19,12 @@ class TenantPolicy
     {
         return $user->roleIn($tenant) === Role::Owner;
     }
+
+    /**
+     * Create, edit and delete the workspace's subjects: owners only. Every member can view them.
+     */
+    public function manageSubjects(User $user, Tenant $tenant): bool
+    {
+        return $user->roleIn($tenant) === Role::Owner;
+    }
 }
