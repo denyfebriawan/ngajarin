@@ -55,11 +55,11 @@ class HandleInertiaRequests extends Middleware
      */
     private function currentTenant(): ?array
     {
-        if (! app()->bound(CurrentTenant::class)) {
+        $current = CurrentTenant::resolve();
+
+        if ($current === null) {
             return null;
         }
-
-        $current = app(CurrentTenant::class);
 
         return [
             'name' => $current->tenant->name,

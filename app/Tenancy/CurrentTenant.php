@@ -16,4 +16,12 @@ final readonly class CurrentTenant
         public Tenant $tenant,
         public Role $role,
     ) {}
+
+    /**
+     * The current tenant, or null when none is set (outside tenant routes, in the console, in jobs).
+     */
+    public static function resolve(): ?self
+    {
+        return app()->bound(self::class) ? app(self::class) : null;
+    }
 }
