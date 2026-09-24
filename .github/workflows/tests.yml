@@ -60,3 +60,34 @@ jobs:
 
       - name: Run CI Checks
         run: composer ci:check
+
+  deploy:
+    # Only after every check above passed, and only for pushes to main (a merged PR), never for PRs.
+    needs: ci
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+
+    # Shown on GitHub as the "production" deployment, with a link to the live site.
+    environment:
+      name: production
+      url: https://ngajarin.denyfebriawan.dev
+
+    # One deploy at a time: a second push waits for the running deploy instead of racing it.
+    concurrency:
+      group: production-deploy
+      cancel-in-progress: false
+
+    steps:
+      - name: Deploy over SSH
+        env:
+          DEPLOY_SSH_KEY: ${{ secrets.DEPLOY_SSH_KEY }}
+          DEPLOY_KNOWN_HOSTS: ${{ secrets.DEPLOY_KNOWN_HOSTS }}
+          DEPLOY_HOST: ${{ secrets.DEPLOY_HOST }}
+        run: |
+          install -m 700 -d ~/.ssh
+          printf '%s\n' "$DEPLOY_SSH_KEY" > ~/.ssh/deploy_key
+          chmod 600 ~/.ssh/deploy_key
+          printf '%s\n' "$DEPLOY_KNOWN_HOSTS" > ~/.ssh/known_hosts
+          # The server lets this key run only deploy/deploy.sh (a forced command), so no command
+          # is given here; the script's output streams into this log.
+          ssh -i ~/.ssh/deploy_key -o BatchMode=yes -o StrictHostKeyChecking=yes "denyfebriawan@$DEPLOY_HOST"
