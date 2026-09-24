@@ -27,4 +27,12 @@ class TenantPolicy
     {
         return $user->roleIn($tenant) === Role::Owner;
     }
+
+    /**
+     * Teach here, i.e. have weekly availability: owners and tutors.
+     */
+    public function teach(User $user, Tenant $tenant): bool
+    {
+        return in_array($user->roleIn($tenant), Role::teaching(), true);
+    }
 }

@@ -15,5 +15,6 @@ export type CurrentTenant = TenantSummary & {
     can: {
         update: boolean;
         manageSubjects: boolean;
+        teach: boolean;
     };
 };

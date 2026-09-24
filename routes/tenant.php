@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Tenant\AvailabilityController;
 use App\Http\Controllers\Tenant\SubjectController;
 use App\Http\Controllers\Tenant\TenantSettingsController;
 use App\Http\Middleware\EnsureTenantMember;
@@ -24,5 +25,11 @@ Route::middleware(['auth', 'verified', EnsureTenantMember::class])
 
         Route::middleware('can:manageSubjects,tenant')->group(function () {
             Route::resource('subjects', SubjectController::class)->except(['index', 'show']);
+        });
+
+        // Each teacher (owner or tutor) edits their own weekly hours.
+        Route::middleware('can:teach,tenant')->group(function () {
+            Route::get('availability', [AvailabilityController::class, 'edit'])->name('availability.edit');
+            Route::put('availability', [AvailabilityController::class, 'update'])->name('availability.update');
         });
     });

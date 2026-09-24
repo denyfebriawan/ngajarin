@@ -2,6 +2,7 @@ import { Link, usePage } from '@inertiajs/react';
 import {
     BookOpen,
     Building2,
+    CalendarClock,
     FolderGit2,
     GraduationCap,
     House,
@@ -25,6 +26,7 @@ import {
 import { dashboard } from '@/routes';
 import { dashboard as tenantDashboard } from '@/routes/tenant';
 import { edit as tenantSettings } from '@/routes/tenant/settings';
+import { edit as tenantAvailability } from '@/routes/tenant/availability';
 import { index as tenantSubjects } from '@/routes/tenant/subjects';
 import { create as createTenant } from '@/routes/tenants';
 import type { NavItem } from '@/types';
@@ -66,6 +68,15 @@ export function AppSidebar() {
                   href: tenantSubjects(currentTenant.slug),
                   icon: GraduationCap,
               },
+              ...(currentTenant.can.teach
+                  ? [
+                        {
+                            title: 'My availability',
+                            href: tenantAvailability(currentTenant.slug),
+                            icon: CalendarClock,
+                        },
+                    ]
+                  : []),
               ...(currentTenant.can.update
                   ? [
                         {
