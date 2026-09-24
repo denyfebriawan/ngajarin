@@ -44,16 +44,18 @@ class HandleInertiaRequests extends Middleware
             ],
             'sidebarOpen' => ! $request->hasCookie('sidebar_state') || $request->cookie('sidebar_state') === 'true',
             // A closure, so it runs when the page is rendered: after EnsureTenantMember has run.
-            'currentTenant' => fn () => $this->currentTenant(),
+            'currentTenant' => fn () => $this->currentTenant($request),
         ];
     }
 
     /**
      * The tenant this request is for, or null outside tenant routes.
      *
-     * @return array{name: string, slug: string, role: string}|null
+     * `can` tells the UI which actions to show; the server still checks each action itself.
+     *
+     * @return array{name: string, slug: string, role: string, can: array{update: bool}}|null
      */
-    private function currentTenant(): ?array
+    private function currentTenant(Request $request): ?array
     {
         $current = CurrentTenant::resolve();
 
@@ -65,6 +67,9 @@ class HandleInertiaRequests extends Middleware
             'name' => $current->tenant->name,
             'slug' => $current->tenant->slug,
             'role' => $current->role->value,
+            'can' => [
+                'update' => $request->user()?->can('update', $current->tenant) ?? false,
+            ],
         ];
     }
 }

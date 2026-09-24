@@ -31,6 +31,7 @@ test('members can open their tenant and see it with their role', function () {
                 'name' => 'Budi Math',
                 'slug' => 'budi-math',
                 'role' => 'tutor',
+                'can' => ['update' => false],
             ]),
         );
 });
