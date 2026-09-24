@@ -1,0 +1,17 @@
+# Keeps Laravel's queue worker running. Installed by setup-app.sh as
+# /etc/systemd/system/ngajarin-queue.service.
+[Unit]
+Description=Ngajarin queue worker
+After=network.target postgresql.service
+
+[Service]
+User=denyfebriawan
+Group=denyfebriawan
+WorkingDirectory=/var/www/ngajarin
+# --max-time: exit after an hour so systemd starts a fresh process (clears leaked memory).
+ExecStart=/usr/bin/php artisan queue:work --sleep=3 --tries=3 --max-time=3600
+Restart=always
+RestartSec=5
+
+[Install]
+WantedBy=multi-user.target
