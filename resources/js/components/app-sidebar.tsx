@@ -7,6 +7,7 @@ import {
     GraduationCap,
     House,
     LayoutGrid,
+    Plane,
     Plus,
     Settings,
 } from 'lucide-react';
@@ -28,6 +29,7 @@ import { dashboard as tenantDashboard } from '@/routes/tenant';
 import { edit as tenantSettings } from '@/routes/tenant/settings';
 import { edit as tenantAvailability } from '@/routes/tenant/availability';
 import { index as tenantSubjects } from '@/routes/tenant/subjects';
+import { index as tenantTimeOff } from '@/routes/tenant/time-off';
 import { create as createTenant } from '@/routes/tenants';
 import type { NavItem } from '@/types';
 
@@ -74,6 +76,11 @@ export function AppSidebar() {
                             title: 'My availability',
                             href: tenantAvailability(currentTenant.slug),
                             icon: CalendarClock,
+                        },
+                        {
+                            title: 'Time off',
+                            href: tenantTimeOff(currentTenant.slug),
+                            icon: Plane,
                         },
                     ]
                   : []),

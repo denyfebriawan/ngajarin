@@ -3,6 +3,7 @@
 use App\Http\Controllers\Tenant\AvailabilityController;
 use App\Http\Controllers\Tenant\SubjectController;
 use App\Http\Controllers\Tenant\TenantSettingsController;
+use App\Http\Controllers\Tenant\TimeOffController;
 use App\Http\Middleware\EnsureTenantMember;
 use Illuminate\Support\Facades\Route;
 
@@ -31,5 +32,11 @@ Route::middleware(['auth', 'verified', EnsureTenantMember::class])
         Route::middleware('can:teach,tenant')->group(function () {
             Route::get('availability', [AvailabilityController::class, 'edit'])->name('availability.edit');
             Route::put('availability', [AvailabilityController::class, 'update'])->name('availability.update');
+
+            Route::get('time-off', [TimeOffController::class, 'index'])->name('time-off.index');
+            Route::post('time-off', [TimeOffController::class, 'store'])->name('time-off.store');
+            Route::delete('time-off/{timeOff}', [TimeOffController::class, 'destroy'])
+                ->can('delete', 'timeOff')
+                ->name('time-off.destroy');
         });
     });

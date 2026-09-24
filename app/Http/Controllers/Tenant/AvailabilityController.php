@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\Tenant\AvailabilityRequest;
 use App\Models\AvailabilityRule;
 use App\Models\Tenant;
+use App\Support\PostgresError;
 use Illuminate\Database\QueryException;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -19,9 +20,6 @@ use Inertia\Response;
  */
 class AvailabilityController extends Controller
 {
-    // Postgres's error code for a violated EXCLUDE constraint.
-    private const EXCLUSION_VIOLATION = '23P01';
-
     public function edit(Request $request): Response
     {
         return Inertia::render('tenant/availability', [
@@ -57,7 +55,7 @@ class AvailabilityController extends Controller
         } catch (QueryException $exception) {
             // Validation already rejects overlaps within one save, so this only happens when two
             // saves race (say, from two tabs). The database constraint lets one of them through.
-            if ($exception->getCode() !== self::EXCLUSION_VIOLATION) {
+            if (! PostgresError::isExclusionViolation($exception)) {
                 throw $exception;
             }
 
