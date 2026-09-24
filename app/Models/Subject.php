@@ -7,6 +7,7 @@ use Database\Factories\SubjectFactory;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Support\Carbon;
 
 /**
@@ -38,5 +39,26 @@ class Subject extends Model
             'duration_minutes' => 'integer',
             'price' => 'integer',
         ];
+    }
+
+    /**
+     * The workspace members (owners or tutors) who teach this subject.
+     *
+     * @return BelongsToMany<User, $this>
+     */
+    public function teachers(): BelongsToMany
+    {
+        return $this->belongsToMany(User::class, 'subject_teacher');
+    }
+
+    /**
+     * Replace this subject's teachers with the given users.
+     *
+     * @param  list<int>  $userIds
+     */
+    public function syncTeachers(array $userIds): void
+    {
+        // The pivot's tenant_id is part of both composite foreign keys, so it must be filled in.
+        $this->teachers()->syncWithPivotValues($userIds, ['tenant_id' => $this->tenant_id]);
     }
 }

@@ -41,6 +41,16 @@ class Tenant extends Model
     }
 
     /**
+     * Members who can teach here (owners and tutors), i.e. who can be given subjects.
+     *
+     * @return BelongsToMany<User, $this, Membership>
+     */
+    public function teachers(): BelongsToMany
+    {
+        return $this->users()->wherePivotIn('role', Role::teaching());
+    }
+
+    /**
      * Add a user to this tenant with the given role.
      */
     public function addMember(User $user, Role $role): void

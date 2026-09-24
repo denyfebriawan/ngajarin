@@ -60,6 +60,15 @@ export default function SubjectsIndex({ subjects }: { subjects: Subject[] }) {
                                             {subject.description}
                                         </p>
                                     )}
+                                    <p className="text-sm text-muted-foreground">
+                                        {subject.teachers.length > 0
+                                            ? `Taught by ${subject.teachers
+                                                  .map(
+                                                      (teacher) => teacher.name,
+                                                  )
+                                                  .join(', ')}`
+                                            : 'No teacher yet'}
+                                    </p>
                                 </div>
                                 <div className="flex shrink-0 items-center gap-4 text-sm">
                                     <span className="text-muted-foreground">

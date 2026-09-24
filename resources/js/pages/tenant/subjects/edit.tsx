@@ -3,9 +3,15 @@ import SubjectController from '@/actions/App/Http/Controllers/Tenant/SubjectCont
 import Heading from '@/components/heading';
 import SubjectForm from '@/components/subject-form';
 import { Button } from '@/components/ui/button';
-import type { Subject } from '@/types';
+import type { Subject, Teacher } from '@/types';
 
-export default function EditSubject({ subject }: { subject: Subject }) {
+export default function EditSubject({
+    subject,
+    teachers,
+}: {
+    subject: Subject;
+    teachers: Teacher[];
+}) {
     const { currentTenant } = usePage().props;
 
     if (!currentTenant) {
@@ -24,6 +30,7 @@ export default function EditSubject({ subject }: { subject: Subject }) {
                     <SubjectForm
                         form={SubjectController.update.form(route)}
                         subject={subject}
+                        teachers={teachers}
                         submitLabel="Save"
                     />
                 </div>

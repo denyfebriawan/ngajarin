@@ -2,8 +2,9 @@ import { Head, usePage } from '@inertiajs/react';
 import SubjectController from '@/actions/App/Http/Controllers/Tenant/SubjectController';
 import Heading from '@/components/heading';
 import SubjectForm from '@/components/subject-form';
+import type { Teacher } from '@/types';
 
-export default function CreateSubject() {
+export default function CreateSubject({ teachers }: { teachers: Teacher[] }) {
     const { currentTenant } = usePage().props;
 
     if (!currentTenant) {
@@ -21,6 +22,7 @@ export default function CreateSubject() {
                 />
                 <SubjectForm
                     form={SubjectController.store.form(currentTenant.slug)}
+                    teachers={teachers}
                     submitLabel="Create subject"
                 />
             </div>
