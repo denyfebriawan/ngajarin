@@ -22,6 +22,11 @@ set -euo pipefail
     step "PHP dependencies (no dev tools such as Pest or Pint)"
     composer install --no-dev --no-interaction --prefer-dist --optimize-autoloader
 
+    step "Clearing the previous deploy's caches"
+    # The last deploy cached the old routes and config. The frontend build runs
+    # `artisan wayfinder:generate`, which would read that stale route cache and miss new routes.
+    php artisan optimize:clear
+
     step "Frontend build"
     npm ci --no-audit --no-fund
     npm run build
