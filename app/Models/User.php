@@ -2,11 +2,13 @@
 
 namespace App\Models;
 
+use App\Enums\Role;
 use Database\Factories\UserFactory;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\Hidden;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Support\Carbon;
@@ -42,5 +44,26 @@ class User extends Authenticatable implements MustVerifyEmail
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
         ];
+    }
+
+    /**
+     * Every tenant this user belongs to, with their role on the pivot.
+     *
+     * @return BelongsToMany<Tenant, $this, Membership>
+     */
+    public function tenants(): BelongsToMany
+    {
+        return $this->belongsToMany(Tenant::class)
+            ->using(Membership::class)
+            ->withPivot('role')
+            ->withTimestamps();
+    }
+
+    /**
+     * The user's role in the given tenant, or null if they don't belong to it.
+     */
+    public function roleIn(Tenant $tenant): ?Role
+    {
+        return $this->tenants()->whereKey($tenant->id)->first()?->pivot->role;
     }
 }
