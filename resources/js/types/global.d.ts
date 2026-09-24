@@ -1,5 +1,5 @@
 import type { Auth } from '@/types/auth';
-import type { CurrentTenant } from '@/types/tenant';
+import type { CurrentTenant, TenantSummary } from '@/types/tenant';
 
 declare module 'react' {
     interface InputHTMLAttributes<T> {
@@ -14,6 +14,7 @@ declare module '@inertiajs/core' {
             auth: Auth;
             sidebarOpen: boolean;
             currentTenant: CurrentTenant | null;
+            tenants: TenantSummary[];
             [key: string]: unknown;
         };
     }

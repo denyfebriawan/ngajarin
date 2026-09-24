@@ -1,5 +1,13 @@
-import { Link } from '@inertiajs/react';
-import { BookOpen, FolderGit2, LayoutGrid } from 'lucide-react';
+import { Link, usePage } from '@inertiajs/react';
+import {
+    BookOpen,
+    Building2,
+    FolderGit2,
+    House,
+    LayoutGrid,
+    Plus,
+    Settings,
+} from 'lucide-react';
 import AppLogo from '@/components/app-logo';
 import { NavFooter } from '@/components/nav-footer';
 import { NavMain } from '@/components/nav-main';
@@ -14,6 +22,9 @@ import {
     SidebarMenuItem,
 } from '@/components/ui/sidebar';
 import { dashboard } from '@/routes';
+import { dashboard as tenantDashboard } from '@/routes/tenant';
+import { edit as tenantSettings } from '@/routes/tenant/settings';
+import { create as createTenant } from '@/routes/tenants';
 import type { NavItem } from '@/types';
 
 const mainNavItems: NavItem[] = [
@@ -38,6 +49,37 @@ const footerNavItems: NavItem[] = [
 ];
 
 export function AppSidebar() {
+    const { tenants, currentTenant } = usePage().props;
+
+    // Pages of the workspace being viewed; Settings only for users allowed to change it.
+    const currentTenantItems: NavItem[] = currentTenant
+        ? [
+              {
+                  title: 'Overview',
+                  href: tenantDashboard(currentTenant.slug),
+                  icon: House,
+              },
+              ...(currentTenant.can.update
+                  ? [
+                        {
+                            title: 'Settings',
+                            href: tenantSettings(currentTenant.slug),
+                            icon: Settings,
+                        },
+                    ]
+                  : []),
+          ]
+        : [];
+
+    const workspaceItems: NavItem[] = [
+        ...tenants.map((tenant) => ({
+            title: tenant.name,
+            href: tenantDashboard(tenant.slug),
+            icon: Building2,
+        })),
+        { title: 'New workspace', href: createTenant(), icon: Plus },
+    ];
+
     return (
         <Sidebar collapsible="icon" variant="inset">
             <SidebarHeader>
@@ -54,6 +96,13 @@ export function AppSidebar() {
 
             <SidebarContent>
                 <NavMain items={mainNavItems} />
+                {currentTenant && (
+                    <NavMain
+                        label={currentTenant.name}
+                        items={currentTenantItems}
+                    />
+                )}
+                <NavMain label="Workspaces" items={workspaceItems} />
             </SidebarContent>
 
             <SidebarFooter>

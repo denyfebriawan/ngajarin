@@ -2,6 +2,7 @@
 
 namespace App\Http\Middleware;
 
+use App\Models\Tenant;
 use App\Tenancy\CurrentTenant;
 use Illuminate\Http\Request;
 use Inertia\Middleware;
@@ -45,7 +46,22 @@ class HandleInertiaRequests extends Middleware
             'sidebarOpen' => ! $request->hasCookie('sidebar_state') || $request->cookie('sidebar_state') === 'true',
             // A closure, so it runs when the page is rendered: after EnsureTenantMember has run.
             'currentTenant' => fn () => $this->currentTenant($request),
+            'tenants' => fn () => $this->tenants($request),
         ];
+    }
+
+    /**
+     * Every workspace the signed-in user belongs to, for the sidebar.
+     *
+     * @return array<int, array{name: string, slug: string}>
+     */
+    private function tenants(Request $request): array
+    {
+        return $request->user()?->tenants()
+            ->orderBy('name')
+            ->get(['tenants.name', 'tenants.slug'])
+            ->map(fn (Tenant $tenant) => ['name' => $tenant->name, 'slug' => $tenant->slug])
+            ->all() ?? [];
     }
 
     /**

@@ -10,6 +10,10 @@ Route::middleware(['auth', 'verified', EnsureTenantMember::class])
     ->group(function () {
         Route::inertia('/', 'tenant/dashboard')->name('dashboard');
 
+        Route::get('settings', [TenantSettingsController::class, 'edit'])
+            ->can('update', 'tenant')
+            ->name('settings.edit');
+
         Route::patch('settings', [TenantSettingsController::class, 'update'])
             ->can('update', 'tenant')
             ->name('settings.update');

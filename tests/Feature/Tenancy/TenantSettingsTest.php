@@ -27,6 +27,23 @@ test('only owners may update the tenant', function (Role $role, bool $allowed) {
     'student' => [Role::Student, false],
 ]);
 
+test('owners can open the settings page', function () {
+    $owner = memberOf($this->tenant, Role::Owner);
+
+    $this->actingAs($owner)
+        ->get(route('tenant.settings.edit', $this->tenant))
+        ->assertOk()
+        ->assertInertia(fn (Assert $page) => $page->component('tenant/settings'));
+});
+
+test('tutors and students cannot open the settings page', function (Role $role) {
+    $user = memberOf($this->tenant, $role);
+
+    $this->actingAs($user)
+        ->get(route('tenant.settings.edit', $this->tenant))
+        ->assertForbidden();
+})->with([Role::Tutor, Role::Student]);
+
 test('owners can rename the tenant without changing its slug', function () {
     $owner = memberOf($this->tenant, Role::Owner);
 
