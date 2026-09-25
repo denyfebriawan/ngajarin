@@ -20,7 +20,9 @@ beforeEach(function () {
     $this->owner = memberOf($this->tenant, Role::Owner);
     $this->teacher = memberOf($this->tenant, Role::Tutor);
     $this->student = memberOf($this->tenant, Role::Student);
-    $this->subject = Subject::factory()->for($this->tenant)->create(['name' => 'Math Grade 10']);
+    // An explicit length: the factory picks 30-90 minutes at random, and a 90-minute lesson
+    // doesn't fit the one-hour blocks some tests use, which made them fail 1 run in 4.
+    $this->subject = Subject::factory()->for($this->tenant)->create(['name' => 'Math Grade 10', 'duration_minutes' => 60]);
 });
 
 // A lesson in $this->tenant at a local Jakarta date and time.
