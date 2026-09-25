@@ -103,7 +103,7 @@ class BookingController extends Controller
             'message' => __('Lesson booked for :time.', ['time' => $local->format('D j M, H:i')]),
         ]);
 
-        return to_route('tenant.dashboard', $tenant);
+        return to_route('tenant.lessons.index', $tenant);
     }
 
     /**

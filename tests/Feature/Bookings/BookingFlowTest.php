@@ -97,7 +97,7 @@ test('booking creates the lesson and makes the student a member of the workspace
 
     book(['starts_at' => mondayAt('10:00')])
         ->assertSessionHasNoErrors()
-        ->assertRedirect(route('tenant.dashboard', $this->tenant))
+        ->assertRedirect(route('tenant.lessons.index', $this->tenant))
         ->assertInertiaFlash('toast.message', 'Lesson booked for Mon 5 Oct, 10:00.');
 
     $booking = Booking::withoutGlobalScopes()->sole();

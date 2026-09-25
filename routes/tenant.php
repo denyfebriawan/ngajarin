@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\Tenant\AvailabilityController;
 use App\Http\Controllers\Tenant\BookingController;
+use App\Http\Controllers\Tenant\LessonController;
 use App\Http\Controllers\Tenant\SubjectController;
 use App\Http\Controllers\Tenant\TenantSettingsController;
 use App\Http\Controllers\Tenant\TimeOffController;
@@ -37,6 +38,12 @@ Route::middleware(['auth', 'verified', EnsureTenantMember::class])
         Route::middleware('can:manageSubjects,tenant')->group(function () {
             Route::resource('subjects', SubjectController::class)->except(['index', 'show']);
         });
+
+        // Every member sees the lessons they may see; the policy decides who may cancel which.
+        Route::get('lessons', [LessonController::class, 'index'])->name('lessons.index');
+        Route::patch('lessons/{booking}/cancel', [LessonController::class, 'cancel'])
+            ->can('cancel', 'booking')
+            ->name('lessons.cancel');
 
         // Each teacher (owner or tutor) edits their own weekly hours.
         Route::middleware('can:teach,tenant')->group(function () {
