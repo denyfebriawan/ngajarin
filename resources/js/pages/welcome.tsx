@@ -4,10 +4,10 @@ import {
     CalendarCheck2,
     CalendarClock,
     Link2,
-    MapPin,
     ShieldCheck,
 } from 'lucide-react';
 import AppLogo from '@/components/app-logo';
+import Reveal from '@/components/reveal';
 import { Button } from '@/components/ui/button';
 import { dashboard, home, login, register } from '@/routes';
 
@@ -35,12 +35,6 @@ const features: Feature[] = [
         title: 'Weekly hours and time off',
         description:
             'Each teacher sets the hours they teach every week and blocks out holidays. Students only ever see times that are really free.',
-    },
-    {
-        icon: MapPin,
-        title: 'Built for Indonesia',
-        description:
-            'Prices in rupiah, and weekly hours in your own timezone, whether that is WIB, WITA or WIT.',
     },
 ];
 
@@ -70,7 +64,7 @@ export default function Welcome() {
             <Head title="Online lesson booking for tutors" />
 
             <div className="min-h-screen bg-background text-foreground">
-                <header className="border-b">
+                <header className="sticky top-0 z-10 border-b bg-background/80 backdrop-blur">
                     <div className="mx-auto flex h-14 max-w-5xl items-center justify-between px-4">
                         <Link href={home()} className="flex items-center">
                             <AppLogo />
@@ -95,52 +89,81 @@ export default function Welcome() {
                 </header>
 
                 <main>
-                    {/* Hero */}
-                    <section className="mx-auto max-w-5xl px-4 py-20 text-center sm:py-28">
-                        <p className="mb-4 text-sm font-medium text-muted-foreground">
-                            For private tutors and tutoring centers
-                        </p>
-                        <h1 className="mx-auto max-w-3xl text-4xl font-semibold tracking-tight sm:text-5xl">
-                            Let students book your lessons online
-                        </h1>
-                        <p className="mx-auto mt-6 max-w-2xl text-lg text-muted-foreground">
-                            Set your subjects, prices and weekly hours. Students
-                            pick a free time and book it, and no teacher is ever
-                            booked twice for the same time.
-                        </p>
-                        <div className="mt-10 flex flex-wrap justify-center gap-3">
-                            <Button size="lg" asChild>
-                                <Link
-                                    href={auth.user ? dashboard() : register()}
+                    {/* Hero, with a soft brand-coloured glow behind it */}
+                    <section className="relative isolate overflow-hidden">
+                        <div
+                            aria-hidden="true"
+                            className="pointer-events-none absolute inset-x-0 -top-40 -z-10 flex justify-center"
+                        >
+                            <div className="size-160 rounded-full bg-primary/20 blur-3xl" />
+                        </div>
+
+                        <div className="mx-auto max-w-5xl px-4 py-20 text-center sm:py-28">
+                            <Reveal>
+                                <p className="mb-4 inline-flex rounded-full border border-primary/30 bg-primary/10 px-3 py-1 text-sm font-medium text-primary">
+                                    For private tutors and tutoring centers
+                                </p>
+                            </Reveal>
+                            <Reveal delay={100}>
+                                <h1 className="mx-auto max-w-3xl text-4xl font-semibold tracking-tight sm:text-6xl">
+                                    Let students book your lessons{' '}
+                                    <span className="bg-linear-to-r from-primary to-emerald-500 bg-clip-text text-transparent">
+                                        online
+                                    </span>
+                                </h1>
+                            </Reveal>
+                            <Reveal delay={200}>
+                                <p className="mx-auto mt-6 max-w-2xl text-lg text-muted-foreground">
+                                    Set your subjects, prices and weekly hours.
+                                    Students pick a free time and book it, and
+                                    no teacher is ever booked twice for the same
+                                    time.
+                                </p>
+                            </Reveal>
+                            <Reveal
+                                delay={300}
+                                className="mt-10 flex flex-wrap justify-center gap-3"
+                            >
+                                <Button
+                                    size="lg"
+                                    className="shadow-lg shadow-primary/25 transition-transform hover:-translate-y-0.5"
+                                    asChild
                                 >
-                                    <CalendarCheck2 />
-                                    {auth.user
-                                        ? 'Go to your dashboard'
-                                        : 'Create your workspace'}
-                                </Link>
-                            </Button>
-                            <Button size="lg" variant="outline" asChild>
-                                <a href="#how-it-works">See how it works</a>
-                            </Button>
+                                    <Link
+                                        href={
+                                            auth.user ? dashboard() : register()
+                                        }
+                                    >
+                                        <CalendarCheck2 />
+                                        {auth.user
+                                            ? 'Go to your dashboard'
+                                            : 'Create your workspace'}
+                                    </Link>
+                                </Button>
+                                <Button size="lg" variant="outline" asChild>
+                                    <a href="#how-it-works">See how it works</a>
+                                </Button>
+                            </Reveal>
                         </div>
                     </section>
 
                     {/* Features */}
                     <section className="border-y bg-muted/40">
-                        <div className="mx-auto grid max-w-5xl gap-6 px-4 py-16 sm:grid-cols-2">
-                            {features.map((feature) => (
-                                <div
-                                    key={feature.title}
-                                    className="rounded-xl border bg-background p-6"
-                                >
-                                    <feature.icon className="mb-4 size-6 text-primary" />
-                                    <h2 className="font-semibold">
-                                        {feature.title}
-                                    </h2>
-                                    <p className="mt-2 text-sm text-muted-foreground">
-                                        {feature.description}
-                                    </p>
-                                </div>
+                        <div className="mx-auto grid max-w-5xl gap-6 px-4 py-16 md:grid-cols-3">
+                            {features.map((feature, index) => (
+                                <Reveal key={feature.title} delay={index * 120}>
+                                    <div className="group h-full rounded-xl border bg-background p-6 transition duration-300 hover:-translate-y-1 hover:border-primary/40 hover:shadow-lg hover:shadow-primary/10">
+                                        <div className="mb-4 inline-flex rounded-lg bg-primary/10 p-2.5 text-primary transition-colors group-hover:bg-primary group-hover:text-primary-foreground">
+                                            <feature.icon className="size-5" />
+                                        </div>
+                                        <h2 className="font-semibold">
+                                            {feature.title}
+                                        </h2>
+                                        <p className="mt-2 text-sm text-muted-foreground">
+                                            {feature.description}
+                                        </p>
+                                    </div>
+                                </Reveal>
                             ))}
                         </div>
                     </section>
@@ -148,34 +171,42 @@ export default function Welcome() {
                     {/* How it works */}
                     <section
                         id="how-it-works"
-                        className="mx-auto max-w-5xl scroll-mt-8 px-4 py-20"
+                        className="mx-auto max-w-5xl scroll-mt-20 px-4 py-20"
                     >
-                        <h2 className="text-center text-3xl font-semibold tracking-tight">
-                            How it works
-                        </h2>
+                        <Reveal>
+                            <h2 className="text-center text-3xl font-semibold tracking-tight">
+                                How it works
+                            </h2>
+                        </Reveal>
                         <ol className="mt-12 grid gap-8 sm:grid-cols-3">
                             {steps.map((step, index) => (
                                 <li key={step.title}>
-                                    <div className="mb-4 flex size-10 items-center justify-center rounded-full bg-primary font-semibold text-primary-foreground">
-                                        {index + 1}
-                                    </div>
-                                    <h3 className="font-semibold">
-                                        {step.title}
-                                    </h3>
-                                    <p className="mt-2 text-sm text-muted-foreground">
-                                        {step.description}
-                                    </p>
+                                    <Reveal delay={index * 150}>
+                                        <div className="mb-4 flex size-10 items-center justify-center rounded-full bg-primary font-semibold text-primary-foreground shadow-md shadow-primary/25">
+                                            {index + 1}
+                                        </div>
+                                        <h3 className="font-semibold">
+                                            {step.title}
+                                        </h3>
+                                        <p className="mt-2 text-sm text-muted-foreground">
+                                            {step.description}
+                                        </p>
+                                    </Reveal>
                                 </li>
                             ))}
                         </ol>
                         {!auth.user && (
-                            <div className="mt-14 text-center">
-                                <Button size="lg" asChild>
+                            <Reveal className="mt-14 text-center">
+                                <Button
+                                    size="lg"
+                                    className="shadow-lg shadow-primary/25 transition-transform hover:-translate-y-0.5"
+                                    asChild
+                                >
                                     <Link href={register()}>
                                         Get started, it’s free
                                     </Link>
                                 </Button>
-                            </div>
+                            </Reveal>
                         )}
                     </section>
                 </main>
@@ -185,7 +216,7 @@ export default function Welcome() {
                         <p>Built with Laravel, React and PostgreSQL.</p>
                         <a
                             href="https://github.com/denyfebriawan/ngajarin"
-                            className="underline-offset-4 hover:underline"
+                            className="underline-offset-4 hover:text-primary hover:underline"
                             target="_blank"
                             rel="noreferrer"
                         >
