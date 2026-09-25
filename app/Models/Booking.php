@@ -6,7 +6,6 @@ use App\Enums\BookingStatus;
 use App\Tenancy\BelongsToTenant;
 use Carbon\CarbonImmutable;
 use Database\Factories\BookingFactory;
-use Illuminate\Database\Eloquent\Attributes\DateFormat;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\Hidden;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -33,8 +32,6 @@ use Illuminate\Support\Carbon;
 #[Fillable(['subject_id', 'teacher_id', 'student_id', 'starts_at', 'ends_at', 'price'])]
 // `period` is computed by Postgres; the app reads starts_at/ends_at instead.
 #[Hidden(['period'])]
-// Send timestamps with their offset; see the note on timestampTz columns in CLAUDE.md.
-#[DateFormat('Y-m-d H:i:sP')]
 class Booking extends Model
 {
     /** @use HasFactory<BookingFactory> */

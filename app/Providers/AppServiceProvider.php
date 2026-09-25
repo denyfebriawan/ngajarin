@@ -2,7 +2,9 @@
 
 namespace App\Providers;
 
+use App\Database\PostgresConnection;
 use Carbon\CarbonImmutable;
+use Illuminate\Database\Connection;
 use Illuminate\Support\Facades\Date;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\ServiceProvider;
@@ -15,7 +17,8 @@ class AppServiceProvider extends ServiceProvider
      */
     public function register(): void
     {
-        //
+        // Build pgsql connections with our subclass, whose grammar sends dates with their offset.
+        Connection::resolverFor('pgsql', fn ($pdo, string $database, string $prefix, array $config) => new PostgresConnection($pdo, $database, $prefix, $config));
     }
 
     /**

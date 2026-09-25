@@ -7,6 +7,7 @@ import {
     ShieldCheck,
 } from 'lucide-react';
 import AppLogo from '@/components/app-logo';
+import BookingPreview from '@/components/landing/booking-preview';
 import Reveal from '@/components/reveal';
 import { Button } from '@/components/ui/button';
 import { dashboard, home, login, register } from '@/routes';
@@ -57,11 +58,31 @@ const steps = [
 ];
 
 export default function Welcome() {
-    const { auth } = usePage().props;
+    const { auth, name } = usePage().props;
+    const description =
+        'Ngajarin gives private tutors and tutoring centers a booking page: students pick a free time and book, and no teacher is ever double-booked.';
 
     return (
         <>
-            <Head title="Online lesson booking for tutors" />
+            {/* Brand first on the home page. The description is the summary search engines and
+                link previews (WhatsApp, LinkedIn) show under the title. */}
+            <Head title={`${name} — Online lesson booking for tutors`}>
+                <meta
+                    head-key="description"
+                    name="description"
+                    content={description}
+                />
+                <meta
+                    head-key="og:title"
+                    property="og:title"
+                    content={`${name} — Online lesson booking for tutors`}
+                />
+                <meta
+                    head-key="og:description"
+                    property="og:description"
+                    content={description}
+                />
+            </Head>
 
             <div className="min-h-screen bg-background text-foreground">
                 <header className="sticky top-0 z-10 border-b bg-background/80 backdrop-blur">
@@ -98,51 +119,61 @@ export default function Welcome() {
                             <div className="size-160 rounded-full bg-primary/20 blur-3xl" />
                         </div>
 
-                        <div className="mx-auto max-w-5xl px-4 py-20 text-center sm:py-28">
-                            <Reveal>
-                                <p className="mb-4 inline-flex rounded-full border border-primary/30 bg-primary/10 px-3 py-1 text-sm font-medium text-primary">
-                                    For private tutors and tutoring centers
-                                </p>
-                            </Reveal>
-                            <Reveal delay={100}>
-                                <h1 className="mx-auto max-w-3xl text-4xl font-semibold tracking-tight sm:text-6xl">
-                                    Let students book your lessons{' '}
-                                    <span className="bg-linear-to-r from-primary to-emerald-500 bg-clip-text text-transparent">
-                                        online
-                                    </span>
-                                </h1>
-                            </Reveal>
-                            <Reveal delay={200}>
-                                <p className="mx-auto mt-6 max-w-2xl text-lg text-muted-foreground">
-                                    Set your subjects, prices and weekly hours.
-                                    Students pick a free time and book it, and
-                                    no teacher is ever booked twice for the same
-                                    time.
-                                </p>
-                            </Reveal>
-                            <Reveal
-                                delay={300}
-                                className="mt-10 flex flex-wrap justify-center gap-3"
-                            >
-                                <Button
-                                    size="lg"
-                                    className="shadow-lg shadow-primary/25 transition-transform hover:-translate-y-0.5"
-                                    asChild
+                        <div className="mx-auto grid max-w-6xl items-center gap-16 px-4 py-20 sm:py-24 lg:grid-cols-2 lg:gap-12">
+                            <div className="text-center lg:text-left">
+                                <Reveal>
+                                    <p className="mb-4 inline-flex rounded-full border border-primary/30 bg-primary/10 px-3 py-1 text-sm font-medium text-primary">
+                                        For private tutors and tutoring centers
+                                    </p>
+                                </Reveal>
+                                <Reveal delay={100}>
+                                    <h1 className="mx-auto max-w-3xl text-4xl font-bold sm:text-5xl lg:mx-0 xl:text-6xl">
+                                        Let students book your lessons{' '}
+                                        <span className="bg-linear-to-r from-primary to-emerald-500 bg-clip-text text-transparent">
+                                            online
+                                        </span>
+                                    </h1>
+                                </Reveal>
+                                <Reveal delay={200}>
+                                    <p className="mx-auto mt-6 max-w-2xl text-lg text-muted-foreground lg:mx-0">
+                                        Set your subjects, prices and weekly
+                                        hours. Students pick a free time and
+                                        book it, and no teacher is ever booked
+                                        twice for the same time.
+                                    </p>
+                                </Reveal>
+                                <Reveal
+                                    delay={300}
+                                    className="mt-10 flex flex-wrap justify-center gap-3 lg:justify-start"
                                 >
-                                    <Link
-                                        href={
-                                            auth.user ? dashboard() : register()
-                                        }
+                                    <Button
+                                        size="lg"
+                                        className="shadow-lg shadow-primary/25 transition-transform hover:-translate-y-0.5"
+                                        asChild
                                     >
-                                        <CalendarCheck2 />
-                                        {auth.user
-                                            ? 'Go to your dashboard'
-                                            : 'Create your workspace'}
-                                    </Link>
-                                </Button>
-                                <Button size="lg" variant="outline" asChild>
-                                    <a href="#how-it-works">See how it works</a>
-                                </Button>
+                                        <Link
+                                            href={
+                                                auth.user
+                                                    ? dashboard()
+                                                    : register()
+                                            }
+                                        >
+                                            <CalendarCheck2 />
+                                            {auth.user
+                                                ? 'Go to your dashboard'
+                                                : 'Create your workspace'}
+                                        </Link>
+                                    </Button>
+                                    <Button size="lg" variant="outline" asChild>
+                                        <a href="#how-it-works">
+                                            See how it works
+                                        </a>
+                                    </Button>
+                                </Reveal>
+                            </div>
+
+                            <Reveal delay={250} className="lg:pl-6">
+                                <BookingPreview />
                             </Reveal>
                         </div>
                     </section>

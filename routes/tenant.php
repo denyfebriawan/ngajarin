@@ -4,6 +4,7 @@ use App\Http\Controllers\Tenant\AvailabilityController;
 use App\Http\Controllers\Tenant\BookingController;
 use App\Http\Controllers\Tenant\LessonController;
 use App\Http\Controllers\Tenant\SubjectController;
+use App\Http\Controllers\Tenant\TenantDashboardController;
 use App\Http\Controllers\Tenant\TenantSettingsController;
 use App\Http\Controllers\Tenant\TimeOffController;
 use App\Http\Middleware\EnsureTenantMember;
@@ -22,7 +23,7 @@ Route::middleware(['auth', 'verified', EnsureTenantMember::class])
     ->prefix('t/{tenant}')
     ->name('tenant.')
     ->group(function () {
-        Route::inertia('/', 'tenant/dashboard')->name('dashboard');
+        Route::get('/', TenantDashboardController::class)->name('dashboard');
 
         Route::get('settings', [TenantSettingsController::class, 'edit'])
             ->can('update', 'tenant')

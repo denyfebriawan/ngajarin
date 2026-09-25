@@ -5,7 +5,6 @@ namespace App\Models;
 use App\Tenancy\BelongsToTenant;
 use Carbon\CarbonImmutable;
 use Database\Factories\TimeOffFactory;
-use Illuminate\Database\Eloquent\Attributes\DateFormat;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\Table;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -27,9 +26,6 @@ use Illuminate\Support\Carbon;
  */
 #[Table('time_off')]
 #[Fillable(['user_id', 'starts_at', 'ends_at', 'reason'])]
-// Send dates to Postgres with their offset ("...00:00:00+07:00"). The default "Y-m-d H:i:s" drops
-// it, so 00:00 in Jakarta would be stored as 00:00 UTC, seven hours off.
-#[DateFormat('Y-m-d H:i:sP')]
 class TimeOff extends Model
 {
     /** @use HasFactory<TimeOffFactory> */
