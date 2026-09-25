@@ -1,11 +1,22 @@
 <?php
 
 use App\Http\Controllers\Tenant\AvailabilityController;
+use App\Http\Controllers\Tenant\BookingController;
+use App\Http\Controllers\Tenant\LessonController;
 use App\Http\Controllers\Tenant\SubjectController;
 use App\Http\Controllers\Tenant\TenantSettingsController;
 use App\Http\Controllers\Tenant\TimeOffController;
 use App\Http\Middleware\EnsureTenantMember;
 use Illuminate\Support\Facades\Route;
+
+// The public booking page: no membership check, since visitors aren't members yet. Looking is
+// open to everyone; booking needs a verified account (and joins the workspace as a student).
+Route::prefix('t/{tenant}')->name('tenant.')->group(function () {
+    Route::get('book', [BookingController::class, 'create'])->name('book');
+    Route::post('book', [BookingController::class, 'store'])
+        ->middleware(['auth', 'verified', 'throttle:10,1'])
+        ->name('book.store');
+});
 
 Route::middleware(['auth', 'verified', EnsureTenantMember::class])
     ->prefix('t/{tenant}')
@@ -27,6 +38,12 @@ Route::middleware(['auth', 'verified', EnsureTenantMember::class])
         Route::middleware('can:manageSubjects,tenant')->group(function () {
             Route::resource('subjects', SubjectController::class)->except(['index', 'show']);
         });
+
+        // Every member sees the lessons they may see; the policy decides who may cancel which.
+        Route::get('lessons', [LessonController::class, 'index'])->name('lessons.index');
+        Route::patch('lessons/{booking}/cancel', [LessonController::class, 'cancel'])
+            ->can('cancel', 'booking')
+            ->name('lessons.cancel');
 
         // Each teacher (owner or tutor) edits their own weekly hours.
         Route::middleware('can:teach,tenant')->group(function () {

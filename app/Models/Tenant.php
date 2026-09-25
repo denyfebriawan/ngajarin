@@ -10,6 +10,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Support\Carbon;
+use Illuminate\Support\Facades\DB;
 
 /**
  * A tutor's or tutoring center's workspace.
@@ -58,6 +59,22 @@ class Tenant extends Model
     public function teachers(): BelongsToMany
     {
         return $this->users()->wherePivotIn('role', Role::teaching());
+    }
+
+    /**
+     * Make the user a member with the given role, unless they already are one. An existing
+     * membership is left untouched: an owner booking a lesson in their own workspace stays owner.
+     */
+    public function ensureMember(User $user, Role $role): void
+    {
+        // INSERT ... ON CONFLICT DO NOTHING: also safe when two requests do this at the same moment.
+        DB::table('tenant_user')->insertOrIgnore([
+            'tenant_id' => $this->id,
+            'user_id' => $user->id,
+            'role' => $role->value,
+            'created_at' => now(),
+            'updated_at' => now(),
+        ]);
     }
 
     /**

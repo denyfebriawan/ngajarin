@@ -10,5 +10,6 @@ export type User = {
 };
 
 export type Auth = {
-    user: User;
+    // null for guests, e.g. on a workspace's public booking page.
+    user: User | null;
 };

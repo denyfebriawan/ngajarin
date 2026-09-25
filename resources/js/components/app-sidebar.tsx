@@ -4,6 +4,7 @@ import {
     Building2,
     CalendarClock,
     FolderGit2,
+    BookOpenCheck,
     GraduationCap,
     House,
     LayoutGrid,
@@ -28,6 +29,7 @@ import { dashboard } from '@/routes';
 import { dashboard as tenantDashboard } from '@/routes/tenant';
 import { edit as tenantSettings } from '@/routes/tenant/settings';
 import { edit as tenantAvailability } from '@/routes/tenant/availability';
+import { index as tenantLessons } from '@/routes/tenant/lessons';
 import { index as tenantSubjects } from '@/routes/tenant/subjects';
 import { index as tenantTimeOff } from '@/routes/tenant/time-off';
 import { create as createTenant } from '@/routes/tenants';
@@ -64,6 +66,11 @@ export function AppSidebar() {
                   title: 'Overview',
                   href: tenantDashboard(currentTenant.slug),
                   icon: House,
+              },
+              {
+                  title: 'Lessons',
+                  href: tenantLessons(currentTenant.slug),
+                  icon: BookOpenCheck,
               },
               {
                   title: 'Subjects',
