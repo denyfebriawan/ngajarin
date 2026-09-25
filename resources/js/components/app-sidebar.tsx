@@ -1,8 +1,10 @@
 import { Link, usePage } from '@inertiajs/react';
+import type { LucideIcon } from 'lucide-react';
 import {
     BookOpen,
     Building2,
     CalendarClock,
+    CalendarPlus,
     FolderGit2,
     BookOpenCheck,
     GraduationCap,
@@ -12,6 +14,7 @@ import {
     Plus,
     Settings,
 } from 'lucide-react';
+import BookingController from '@/actions/App/Http/Controllers/Tenant/BookingController';
 import AppLogo from '@/components/app-logo';
 import { NavFooter } from '@/components/nav-footer';
 import { NavMain } from '@/components/nav-main';
@@ -32,8 +35,9 @@ import { edit as tenantAvailability } from '@/routes/tenant/availability';
 import { index as tenantLessons } from '@/routes/tenant/lessons';
 import { index as tenantSubjects } from '@/routes/tenant/subjects';
 import { index as tenantTimeOff } from '@/routes/tenant/time-off';
+import { teaches } from '@/lib/roles';
 import { create as createTenant } from '@/routes/tenants';
-import type { NavItem } from '@/types';
+import type { NavItem, TenantSummary } from '@/types';
 
 const mainNavItems: NavItem[] = [
     {
@@ -72,6 +76,16 @@ export function AppSidebar() {
                   href: tenantLessons(currentTenant.slug),
                   icon: BookOpenCheck,
               },
+              // Students' main action in a workspace.
+              ...(!currentTenant.can.teach
+                  ? [
+                        {
+                            title: 'Book a lesson',
+                            href: BookingController.create(currentTenant.slug),
+                            icon: CalendarPlus,
+                        },
+                    ]
+                  : []),
               {
                   title: 'Subjects',
                   href: tenantSubjects(currentTenant.slug),
@@ -103,14 +117,23 @@ export function AppSidebar() {
           ]
         : [];
 
-    const workspaceItems: NavItem[] = [
-        ...tenants.map((tenant) => ({
-            title: tenant.name,
-            href: tenantDashboard(tenant.slug),
-            icon: Building2,
-        })),
-        { title: 'New workspace', href: createTenant(), icon: Plus },
+    // Workspaces split by the user's role: where they teach, and where they study.
+    const toItem = (tenant: TenantSummary, icon: LucideIcon): NavItem => ({
+        title: tenant.name,
+        href: tenantDashboard(tenant.slug),
+        icon,
+    });
+
+    const teachingItems: NavItem[] = [
+        ...tenants
+            .filter((tenant) => teaches(tenant.role))
+            .map((tenant) => toItem(tenant, Building2)),
+        { title: 'Create a workspace', href: createTenant(), icon: Plus },
     ];
+
+    const studyingItems: NavItem[] = tenants
+        .filter((tenant) => !teaches(tenant.role))
+        .map((tenant) => toItem(tenant, GraduationCap));
 
     return (
         <Sidebar collapsible="icon" variant="inset">
@@ -134,7 +157,10 @@ export function AppSidebar() {
                         items={currentTenantItems}
                     />
                 )}
-                <NavMain label="Workspaces" items={workspaceItems} />
+                {studyingItems.length > 0 && (
+                    <NavMain label="My tutors" items={studyingItems} />
+                )}
+                <NavMain label="Teaching" items={teachingItems} />
             </SidebarContent>
 
             <SidebarFooter>

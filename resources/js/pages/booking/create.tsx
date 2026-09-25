@@ -84,6 +84,10 @@ export default function BookLesson({
                                     {formatDuration(s.duration_minutes)} ·{' '}
                                     {formatRupiah(s.price)}
                                 </div>
+                                <div className="mt-1 text-sm text-muted-foreground">
+                                    with{' '}
+                                    {s.teachers.map((t) => t.name).join(', ')}
+                                </div>
                             </Link>
                         ))}
                     </div>

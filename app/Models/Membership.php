@@ -4,6 +4,7 @@ namespace App\Models;
 
 use App\Enums\Role;
 use Illuminate\Database\Eloquent\Attributes\Table;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\Pivot;
 use Illuminate\Support\Carbon;
 
@@ -29,5 +30,15 @@ class Membership extends Pivot
         return [
             'role' => Role::class,
         ];
+    }
+
+    /**
+     * The workspace this membership is in.
+     *
+     * @return BelongsTo<Tenant, $this>
+     */
+    public function tenant(): BelongsTo
+    {
+        return $this->belongsTo(Tenant::class);
     }
 }
