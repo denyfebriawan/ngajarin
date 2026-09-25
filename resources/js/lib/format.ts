@@ -23,6 +23,19 @@ export function formatDate(isoDate: string): string {
     return shortDate.format(new Date(year, month - 1, day));
 }
 
+const dayHeading = new Intl.DateTimeFormat('en-GB', {
+    weekday: 'short',
+    day: 'numeric',
+    month: 'short',
+});
+
+// "2026-10-05" -> "Mon 5 Oct", built from the parts for the same reason as formatDate().
+export function formatDayHeading(isoDate: string): string {
+    const [year, month, day] = isoDate.split('-').map(Number);
+
+    return dayHeading.format(new Date(year, month - 1, day));
+}
+
 // 90 -> "1 h 30 min", 60 -> "1 h", 45 -> "45 min"
 export function formatDuration(minutes: number): string {
     const hours = Math.floor(minutes / 60);

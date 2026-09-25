@@ -50,6 +50,7 @@ test('anyone can see which subjects the workspace offers', function () {
     $this->get(route('tenant.book', $this->tenant))
         ->assertOk()
         ->assertInertia(fn (Assert $page) => $page
+            ->component('booking/create')
             ->where('tenant.name', 'Budi Math')
             ->has('subjects', 1)
             ->where('subjects.0.name', 'Math Grade 10')
