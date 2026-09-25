@@ -2,7 +2,7 @@
 
 namespace App\Http\Middleware;
 
-use App\Models\Tenant;
+use App\Models\Membership;
 use App\Tenancy\CurrentTenant;
 use Illuminate\Http\Request;
 use Inertia\Middleware;
@@ -53,15 +53,30 @@ class HandleInertiaRequests extends Middleware
     /**
      * Every workspace the signed-in user belongs to, for the sidebar.
      *
-     * @return array<int, array{name: string, slug: string}>
+     * @return array<int, array{name: string, slug: string, role: string}>
      */
     private function tenants(Request $request): array
     {
-        return $request->user()?->tenants()
-            ->orderBy('name')
-            ->get(['tenants.name', 'tenants.slug'])
-            ->map(fn (Tenant $tenant) => ['name' => $tenant->name, 'slug' => $tenant->slug])
-            ->all() ?? [];
+        $user = $request->user();
+
+        if ($user === null) {
+            return [];
+        }
+
+        // Each membership is "this user's role in this workspace"; the role lets the UI separate
+        // workspaces the user teaches in from those they study in.
+        return Membership::query()
+            ->with('tenant')
+            ->where('user_id', $user->id)
+            ->get()
+            ->sortBy(fn (Membership $membership) => $membership->tenant->name)
+            ->map(fn (Membership $membership) => [
+                'name' => $membership->tenant->name,
+                'slug' => $membership->tenant->slug,
+                'role' => $membership->role->value,
+            ])
+            ->values()
+            ->all();
     }
 
     /**

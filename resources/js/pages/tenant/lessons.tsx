@@ -1,5 +1,6 @@
 import { Head, Link, usePage } from '@inertiajs/react';
-import { CalendarDays } from 'lucide-react';
+import { CalendarDays, CalendarPlus } from 'lucide-react';
+import BookingController from '@/actions/App/Http/Controllers/Tenant/BookingController';
 import LessonController from '@/actions/App/Http/Controllers/Tenant/LessonController';
 import Heading from '@/components/heading';
 import { Badge } from '@/components/ui/badge';
@@ -91,10 +92,20 @@ export default function Lessons({
             <Head title="Lessons" />
 
             <div className="mx-auto w-full max-w-3xl space-y-8 p-4">
-                <Heading
-                    title="Lessons"
-                    description={`Times are in ${currentTenant.timezone} time.`}
-                />
+                <div className="flex items-start justify-between gap-4">
+                    <Heading
+                        title="Lessons"
+                        description={`Times are in ${currentTenant.timezone} time.`}
+                    />
+                    <Button asChild>
+                        <Link
+                            href={BookingController.create(currentTenant.slug)}
+                        >
+                            <CalendarPlus />
+                            Book a lesson
+                        </Link>
+                    </Button>
+                </div>
 
                 <section className="space-y-3">
                     <h2 className="font-medium">Upcoming</h2>
