@@ -71,6 +71,14 @@ class SubjectController extends Controller
 
     public function destroy(Tenant $tenant, Subject $subject): RedirectResponse
     {
+        // Lesson history must survive. This check gives a friendly message; the bookings table's
+        // foreign key is what guarantees it, even for a lesson booked a moment after the check.
+        if ($subject->bookings()->exists()) {
+            Inertia::flash('toast', ['type' => 'error', 'message' => __('This subject has lessons booked, so it can\'t be deleted.')]);
+
+            return back();
+        }
+
         $subject->delete();
 
         Inertia::flash('toast', ['type' => 'success', 'message' => __('Subject deleted.')]);
