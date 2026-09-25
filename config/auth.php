@@ -114,4 +114,17 @@ return [
 
     'password_timeout' => env('AUTH_PASSWORD_TIMEOUT', 10800),
 
+    /*
+    |--------------------------------------------------------------------------
+    | Email Verification
+    |--------------------------------------------------------------------------
+    |
+    | When false, every account counts as verified: no verification email is sent and no page
+    | asks for one (see User::hasVerifiedEmail). Meant for a deployment whose email sending
+    | isn't working yet. Keep it true wherever mail works.
+    |
+    */
+
+    'verify_email' => (bool) env('AUTH_VERIFY_EMAIL', true),
+
 ];

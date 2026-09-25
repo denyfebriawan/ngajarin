@@ -47,6 +47,17 @@ class User extends Authenticatable implements MustVerifyEmail
     }
 
     /**
+     * Whether the email address counts as verified. With verification switched off
+     * (config auth.verify_email, env AUTH_VERIFY_EMAIL), every account does. Both the `verified`
+     * middleware and the listener that emails new users ask this method, so this one override
+     * turns verification off everywhere.
+     */
+    public function hasVerifiedEmail(): bool
+    {
+        return ! config('auth.verify_email') || parent::hasVerifiedEmail();
+    }
+
+    /**
      * Every tenant this user belongs to, with their role on the pivot.
      *
      * @return BelongsToMany<Tenant, $this, Membership>
