@@ -12,6 +12,22 @@
         'Instrument Sans', ui-sans-serif, system-ui, sans-serif,
         'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol',
         'Noto Color Emoji';
+    /* Headings: Plus Jakarta Sans, designed in Jakarta by Tokotype. Generates `font-display`. */
+    --font-display: 'Plus Jakarta Sans', var(--font-sans);
+
+    /* A slow up-and-down drift, e.g. for the landing page's floating "Lesson booked" card.
+       Generates `animate-float`; always used with motion-safe:. */
+    --animate-float: float 5s ease-in-out infinite;
+
+    @keyframes float {
+        0%,
+        100% {
+            transform: translateY(0);
+        }
+        50% {
+            transform: translateY(-8px);
+        }
+    }
 
     --radius-lg: var(--radius);
     --radius-md: calc(var(--radius) - 2px);
@@ -144,5 +160,12 @@
 
     body {
         @apply bg-background text-foreground;
+    }
+
+    /* Every page heading uses the display font, so pages don't have to remember to. */
+    h1,
+    h2,
+    h3 {
+        @apply font-display tracking-tight;
     }
 }

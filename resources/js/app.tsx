@@ -10,7 +10,15 @@ import SettingsLayout from '@/layouts/settings/layout';
 const appName = import.meta.env.VITE_APP_NAME || 'Laravel';
 
 void createInertiaApp({
-    title: (title) => (title ? `${title} - ${appName}` : appName),
+    // "Lessons - Ngajarin" on inner pages. A title that already starts with the brand (the home
+    // page's "Ngajarin — ...") is used as it is.
+    title: (title) => {
+        if (!title) {
+            return appName;
+        }
+
+        return title.startsWith(appName) ? title : `${title} - ${appName}`;
+    },
     layout: (name) => {
         switch (true) {
             case name === 'welcome':
