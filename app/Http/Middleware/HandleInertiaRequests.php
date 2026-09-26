@@ -42,7 +42,11 @@ class HandleInertiaRequests extends Middleware
             'name' => config('app.name'),
             'auth' => [
                 'user' => $request->user(),
+                // Shared demo accounts see a banner explaining that everything resets nightly.
+                'isDemo' => $request->user()?->isDemo() ?? false,
             ],
+            // Whether to offer the one-click demo logins.
+            'demoEnabled' => (bool) config('demo.enabled'),
             'sidebarOpen' => ! $request->hasCookie('sidebar_state') || $request->cookie('sidebar_state') === 'true',
             // A closure, so it runs when the page is rendered: after EnsureTenantMember has run.
             'currentTenant' => fn () => $this->currentTenant($request),

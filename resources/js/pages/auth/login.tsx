@@ -1,4 +1,5 @@
-import { Form, Head } from '@inertiajs/react';
+import { Form, Head, usePage } from '@inertiajs/react';
+import DemoLoginButtons from '@/components/demo-login-buttons';
 import InputError from '@/components/input-error';
 import PasswordInput from '@/components/password-input';
 import TextLink from '@/components/text-link';
@@ -17,6 +18,8 @@ type Props = {
 };
 
 export default function Login({ status, canResetPassword }: Props) {
+    const { demoEnabled } = usePage().props;
+
     return (
         <>
             <Head title="Log in" />
@@ -98,6 +101,15 @@ export default function Login({ status, canResetPassword }: Props) {
                     </>
                 )}
             </Form>
+
+            {demoEnabled && (
+                <div className="mt-8 border-t pt-6 text-center">
+                    <p className="mb-3 text-sm text-muted-foreground">
+                        Just looking? Try a demo account:
+                    </p>
+                    <DemoLoginButtons className="justify-center" />
+                </div>
+            )}
 
             {status && (
                 <div className="mb-4 text-center text-sm font-medium text-green-600">

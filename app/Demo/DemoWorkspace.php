@@ -64,19 +64,22 @@ final class DemoWorkspace
 
     private function deleteExisting(): void
     {
-        $tenant = Tenant::query()->where('slug', self::SLUG)->first();
+        $demo = Tenant::query()->where('slug', self::SLUG)->first();
+        $owner = $demo?->users()->wherePivot('role', Role::Owner)->first();
 
-        if ($tenant !== null) {
-            $owner = $tenant->users()->wherePivot('role', Role::Owner)->first();
-
-            // Never delete a real customer's workspace that happens to use the demo's address.
-            if ($owner === null || ! str_ends_with($owner->email, '@'.self::EMAIL_DOMAIN)) {
-                throw new LogicException('The workspace "'.self::SLUG.'" does not belong to the demo, so it was not deleted.');
-            }
-
-            // The foreign keys cascade to its memberships, subjects, hours, time off and lessons.
-            $tenant->delete();
+        // Never delete a real customer's workspace that happens to use the demo's address.
+        if ($demo !== null && ($owner === null || ! $owner->isDemo())) {
+            throw new LogicException('The workspace "'.self::SLUG.'" does not belong to the demo, so it was not deleted.');
         }
+
+        // The demo workspace, plus any workspace a visitor created while logged in as a demo
+        // account. The foreign keys cascade to their memberships, subjects, hours, time off and
+        // lessons.
+        Tenant::query()
+            ->whereHas('users', fn ($users) => $users
+                ->where('tenant_user.role', Role::Owner)
+                ->where('users.email', 'like', '%@'.self::EMAIL_DOMAIN))
+            ->delete();
 
         // Also removes the memberships and lessons demo accounts have in other workspaces.
         User::query()->where('email', 'like', '%@'.self::EMAIL_DOMAIN)->delete();

@@ -12,4 +12,6 @@ export type User = {
 export type Auth = {
     // null for guests, e.g. on a workspace's public booking page.
     user: User | null;
+    // Signed in to one of the shared demo accounts.
+    isDemo: boolean;
 };

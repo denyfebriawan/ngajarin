@@ -8,6 +8,7 @@ use App\Http\Controllers\Tenant\TenantDashboardController;
 use App\Http\Controllers\Tenant\TenantSettingsController;
 use App\Http\Controllers\Tenant\TimeOffController;
 use App\Http\Middleware\EnsureTenantMember;
+use App\Http\Middleware\PreventDemoChanges;
 use Illuminate\Support\Facades\Route;
 
 // The public booking page: no membership check, since visitors aren't members yet. Looking is
@@ -31,6 +32,7 @@ Route::middleware(['auth', 'verified', EnsureTenantMember::class])
 
         Route::patch('settings', [TenantSettingsController::class, 'update'])
             ->can('update', 'tenant')
+            ->middleware(PreventDemoChanges::class)
             ->name('settings.update');
 
         // Every member can see the subjects; only owners can change them.

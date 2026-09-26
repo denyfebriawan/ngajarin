@@ -12,6 +12,8 @@ declare module '@inertiajs/core' {
         sharedPageProps: {
             name: string;
             auth: Auth;
+            // Whether to offer the one-click demo logins.
+            demoEnabled: boolean;
             sidebarOpen: boolean;
             currentTenant: CurrentTenant | null;
             tenants: TenantSummary[];

@@ -7,6 +7,7 @@ import {
     ShieldCheck,
 } from 'lucide-react';
 import AppLogo from '@/components/app-logo';
+import DemoLoginButtons from '@/components/demo-login-buttons';
 import BookingPreview from '@/components/landing/booking-preview';
 import Reveal from '@/components/reveal';
 import { Button } from '@/components/ui/button';
@@ -58,7 +59,7 @@ const steps = [
 ];
 
 export default function Welcome() {
-    const { auth, name } = usePage().props;
+    const { auth, demoEnabled, name } = usePage().props;
     const description =
         'Ngajarin gives private tutors and tutoring centers a booking page: students pick a free time and book, and no teacher is ever double-booked.';
 
@@ -170,6 +171,18 @@ export default function Welcome() {
                                         </a>
                                     </Button>
                                 </Reveal>
+                                {demoEnabled && !auth.user && (
+                                    <Reveal
+                                        delay={400}
+                                        className="mt-6 flex flex-col items-center gap-2 lg:items-start"
+                                    >
+                                        <p className="text-sm text-muted-foreground">
+                                            Or look around first, no sign-up
+                                            needed:
+                                        </p>
+                                        <DemoLoginButtons />
+                                    </Reveal>
+                                )}
                             </div>
 
                             <Reveal delay={250} className="lg:pl-6">

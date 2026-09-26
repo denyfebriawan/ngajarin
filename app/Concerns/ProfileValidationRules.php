@@ -2,6 +2,7 @@
 
 namespace App\Concerns;
 
+use App\Demo\DemoWorkspace;
 use App\Models\User;
 use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Validation\Rule;
@@ -43,6 +44,9 @@ trait ProfileValidationRules
             'string',
             'email',
             'max:255',
+            // The demo's addresses: every such account is treated as a demo account and deleted
+            // when the demo is rebuilt, so nobody may sign up with one.
+            'not_regex:/@'.preg_quote(DemoWorkspace::EMAIL_DOMAIN, '/').'$/i',
             $userId === null
                 ? Rule::unique(User::class)
                 : Rule::unique(User::class)->ignore($userId),

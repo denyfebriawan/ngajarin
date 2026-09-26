@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Demo\DemoWorkspace;
 use App\Enums\Role;
 use Database\Factories\UserFactory;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
@@ -55,6 +56,14 @@ class User extends Authenticatable implements MustVerifyEmail
     public function hasVerifiedEmail(): bool
     {
         return ! config('auth.verify_email') || parent::hasVerifiedEmail();
+    }
+
+    /**
+     * Whether this is one of the shared demo accounts anyone can log into (see DemoWorkspace).
+     */
+    public function isDemo(): bool
+    {
+        return str_ends_with($this->email, '@'.DemoWorkspace::EMAIL_DOMAIN);
     }
 
     /**
